@@ -12,7 +12,6 @@
 .classpath
 
 # Build outputs
-target/
 build/
 out/
 bin/
