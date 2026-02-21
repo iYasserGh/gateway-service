@@ -8,8 +8,9 @@ import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 
 import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.reactive.reactive.CorsConfigurationSource;
-import org.springframework.web.cors.reactive.reactive.UrlBasedCorsConfigurationSource;
+import org.springframework.web.cors.reactive.CorsConfigurationSource;
+import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
+import org.springframework.context.annotation.Profile;
 import java.util.Arrays;
 
 @Configuration
@@ -26,7 +27,8 @@ public class SecurityConfig {
     }
 
     @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
+    @Profile("dev")
+    public CorsConfigurationSource devCorsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
 
         // Rules
@@ -42,9 +44,26 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) {
+    @Profile("!dev")
+    public CorsConfigurationSource prodCorsConfigurationSource() {
+        CorsConfiguration config = new CorsConfiguration();
+
+        // Rules
+        config.setAllowedOrigins(Arrays.asList("https://kaustack.com"));
+        config.setAllowedMethods(Arrays.asList("GET", "POST"));
+        config.setAllowedHeaders(Arrays.asList("*"));
+
+        // Set rules on paths
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", config);
+
+        return source;
+    }
+
+    @Bean
+    public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http, CorsConfigurationSource corsConfigurationSource) {
         return http
-                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                .cors(cors -> cors.configurationSource(corsConfigurationSource))
                 .csrf(ServerHttpSecurity.CsrfSpec::disable)
                 .authorizeExchange(exchanges -> exchanges
                         .pathMatchers("/auth/**").permitAll()
