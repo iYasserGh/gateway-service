@@ -11,6 +11,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.reactive.CorsConfigurationSource;
 import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
 import org.springframework.context.annotation.Profile;
+import org.springframework.beans.factory.annotation.Value;
 import java.util.Arrays;
 
 @Configuration
@@ -19,6 +20,9 @@ public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+    
+    @Value("${cors.allowed-origins}")
+    private String allowedOrigins;
 
     public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter, 
                           JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint) {
@@ -32,7 +36,7 @@ public class SecurityConfig {
         CorsConfiguration config = new CorsConfiguration();
 
         // Rules
-        config.setAllowedOrigins(Arrays.asList("*"));
+        config.setAllowedOrigins(Arrays.asList(allowedOrigins));
         config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(Arrays.asList("*"));
 
@@ -49,7 +53,7 @@ public class SecurityConfig {
         CorsConfiguration config = new CorsConfiguration();
 
         // Rules
-        config.setAllowedOrigins(Arrays.asList("https://kaustack.com"));
+        config.setAllowedOrigins(Arrays.asList(allowedOrigins));
         config.setAllowedMethods(Arrays.asList("GET", "POST"));
         config.setAllowedHeaders(Arrays.asList("*"));
 
