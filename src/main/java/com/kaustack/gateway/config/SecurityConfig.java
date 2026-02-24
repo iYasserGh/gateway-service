@@ -31,32 +31,11 @@ public class SecurityConfig {
     }
 
     /**
-    * Development CORS configuration with relaxed rules
-    * @return CorsConfigurationSource with development settings
-    * Note: This configuration is only active when the 'dev' profile is active
+    * CORS configuration with stricter rules
+    * @return CorsConfigurationSource with CORS rules applied
     **/
     @Bean
-    @Profile("dev")
-    public CorsConfigurationSource devCorsConfigurationSource() {
-        CorsConfiguration config = new CorsConfiguration();
-
-        config.setAllowedOrigins(Arrays.asList(allowedOrigins));
-        config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
-        config.setAllowedHeaders(Arrays.asList("*"));
-
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", config);
-
-        return source;
-    }
-
-    /**
-    * Production CORS configuration with stricter rules
-    * @return CorsConfigurationSource with production settings
-    **/
-    @Bean
-    @Profile("!dev")
-    public CorsConfigurationSource prodCorsConfigurationSource() {
+    public CorsConfigurationSource CorsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
 
         // Rules
